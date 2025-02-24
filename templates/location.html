@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Location Management</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+    <div class="container">
+        
+        <!-- Top Bar with Home Button -->
+        <div class="top-bar">
+            <h1>Location Management</h1>
+            <a href="{{ url_for('home') }}" class="btn home-btn">Home</a>
+        </div>
+
+        <div class="form-container">
+            <!-- Add Location Form -->
+            <div class="form-box fixed-left">
+                <h2>Add Location</h2>
+                <form method="POST">
+                    <label for="new_location_id">Location ID:</label>
+                    <input type="text" id="new_location_id" name="new_location_id" class="input-field" required>
+
+                    <label for="new_location_name">Location Name:</label>
+                    <input type="text" id="new_location_name" name="new_location_name" class="input-field" required>
+
+                    <button type="submit" name="add_location" class="btn add-btn">Add Location</button>
+                </form>
+            </div>
+
+            <!-- Edit Location Form (Only Show if Editing) -->
+            {% if request.args.get('edit_id') %}
+            <div class="form-box fixed-right">
+                <h2>Edit Location</h2>
+                <form method="POST">
+                    <label for="edit_location_id">Location ID</label>
+                    <input type="text" id="edit_location_id" name="edit_location_id" class="input-field" 
+                            value="{{ request.args.get('edit_id') }}" readonly>
+
+                    <label for="edit_location_name">Location Name</label>
+                    <input type="text" id="edit_location_name" name="edit_location_name" class="input-field"
+                            value="{{ request.args.get('edit_name') }}" required>
+
+                    <button type="submit" name="edit_location" class="btn edit-btn">Update Location</button>
+                    <a href="{{ url_for('locations') }}" class="btn cancel-btn">Cancel</a>
+                </form>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Search Form -->
+        <form method="GET" class="search-form">
+            <div class="search-container">
+                <input type="text" name="search_loc_id" class="search-input" placeholder="Search by Location ID..." value="{{ search_loc_id }}">
+                <input type="text" name="search_loc_name" class="search-input" placeholder="Search by Location Name..." value="{{ search_loc_name }}">
+            </div>
+            
+            <div class="button-container">
+                <a href="{{ url_for('locations') }}">
+                    <button type="button" class="button-style">Back</button>
+                </a>
+                <button type="submit" class="button-style">Search</button>
+            </div>
+        </form>
+
+        <!-- Location Table -->
+        <table class="product-table">
+            <thead>
+                <tr>
+                    <th>Location ID</th>
+                    <th>Location Name</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for location in locations %}
+                <tr>
+                    <td>{{ location.Location_ID }}</td>
+                    <td>{{ location.Location_Name }}</td>
+
+                    <td>
+                        <!-- Edit Button -->
+                        <a href="{{ url_for('locations', edit_id=location.Location_ID, edit_name=location.Location_Name) }}" 
+                            class="btn edit-btn">
+                            Edit
+                        </a>
+
+                        <!-- Delete Button -->
+                        <form method="POST" style="display:inline;">
+                            <input type="hidden" name="delete_location_id" value="{{ location.Location_ID }}">
+                            <button type="submit" name="delete_location" class="btn delete-btn" 
+                                    onclick="return confirm('Are you sure you want to delete this location?');">
+                                Delete
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+    </div>
+
+</body>
+</html>

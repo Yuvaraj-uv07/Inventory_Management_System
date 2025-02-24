@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Movements</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <div class="top-bar">
+            <h1>Product Movement</h1>
+            <a href="{{ url_for('home') }}" class="btn">Home</a>
+        </div>
+
+        {% if message %}
+            <p class="message">{{ message }}</p>
+        {% endif %}
+
+        <!-- Product Movement Form -->
+        <form method="POST" class="form-grid">
+            <div class="form-group">
+                <label for="from_location">From Location:</label>
+                <input type="text" name="from_location" value="Central Warehouse" readonly required>
+                
+                <label for="to_location">To Location:</label>
+                <select name="to_location" required>
+                    <option value="" disabled selected>Select a location</option>
+                    {% for loc in locations %}
+                        <option value="{{ loc.Location_Name }}">{{ loc.Location_Name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="product_id">Product ID:</label>
+                <select name="product_id" id="product_id" required>
+                    <option value="" disabled selected>Select a product</option>
+                    {% for product in products %}
+                        <option value="{{ product.Product_ID }}">
+                            {{ product.Product_Name }} (Available: {{ product.Product_In - product.Product_Out }})
+                        </option>
+                    {% endfor %}
+                </select>
+
+                <label for="quantity">Quantity:</label>
+                <input type="number" name="quantity" id="quantity" min="1" required>
+            </div>
+
+            <button type="submit" class="btn">Move Product</button>
+        </form>
+
+        <!-- Movement History Table -->
+        <table class="product-table">
+            <thead>
+                <tr>
+                    <th>Movement ID</th>
+                    <th>From Location</th>
+                    <th>To Location</th>
+                    <th>Product ID</th>
+                    <th>Quantity Moved</th>
+                    <th>Timestamp</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for move in movements %}
+                <tr>
+                    <td>{{ move.Movement_ID }}</td>
+                    <td>{{ move.From_Location }}</td>
+                    <td>{{ move.To_Location }}</td>
+                    <td>{{ move.Product_ID }}</td>
+                    <td>{{ move.Quantity }}</td>
+                    <td>{{ move.Timestamp }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

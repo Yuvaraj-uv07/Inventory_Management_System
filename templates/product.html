@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Management</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+    <div class="container">
+        
+<!-- Top Bar with Home Button -->
+<div class="top-bar">
+    <h1>Product Management</h1>
+    <a href="{{ url_for('home') }}" class="btn home-btn">Home</a>
+</div>
+
+<div class="form-container">
+    <!-- Left Box: Add Product -->
+    <div class="form-box">
+        <h2>Add Product</h2>
+        <form method="POST">
+            <label for="new_product_id">Product ID:</label>
+            <input type="text" id="new_product_id" name="new_product_id" class="input-field" required>
+
+            <label for="new_product_name">Product Name:</label>
+            <input type="text" id="new_product_name" name="new_product_name" class="input-field" required>
+
+            <button type="submit" name="add_product" class="btn add-btn">Add Product</button>
+        </form>
+    </div>
+
+<!-- Right Box: Update Product Stock -->
+<div class="form-box">
+    <h2>Update Product Stock</h2>
+    <form method="POST" action="{{ url_for('products') }}">
+        <input type="hidden" name="update_product" value="1">
+        
+        <label for="update_product_id">Enter Product ID:</label>
+        <input type="text" name="Product_ID" id="update_product_id" class="input-field" required>
+    
+        <label for="product_in">Product In:</label>
+        <input type="number" name="Product_in" id="product_in" min="0" class="input-field" required>
+    
+        <label for="product_out">Product Out:</label>
+        <input type="number" name="Product_Out" id="product_out" min="0" class="input-field" required>
+    
+        <button type="submit" class="btn update-btn">Update Stock</button>
+    </form>
+</div>
+
+
+
+
+
+        </div>
+
+        <!-- Search Form -->
+        <form method="GET" class="search-form">
+            <div class="search-container">
+                <input type="text" name="search_id" class="search-input" placeholder="Search by Product ID..." value="{{ search_id }}">
+                <input type="text" name="search_name" class="search-input" placeholder="Search by Product Name..." value="{{ search_name }}">
+            </div>
+            
+            <div class="button-container">
+                <a href="{{ url_for('products') }}">
+                    <button type="button" class="button-style">Back</button>
+                </a>
+                <button type="submit" class="button-style">Search</button>
+            </div>
+        </form>
+
+        <!-- Product Table -->
+<table class="product-table">
+    <thead>
+        <tr>
+            <th>Product ID</th>
+            <th>Product Name</th>
+            <th>Product In</th>
+            <th>Product Out</th>
+            <th>Balance Qty</th>  <!-- Renamed for clarity -->
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for product in products %}
+        <tr>
+            <td>{{ product.Product_ID }}</td>
+            <td>{{ product.Product_Name }}</td>
+            <td>{{ product.Product_In }}</td>
+            <td>{{ product.Product_Out }}</td>
+            <td>{{ product.Product_Qty }}</td>  <!-- Display Calculated Balance -->
+            <td>
+                <!-- Edit Button -->
+                <a href="{{ url_for('products', edit_id=product.Product_ID, edit_name=product.Product_Name) }}" class="btn edit-btn">
+                    Edit
+                </a>
+
+                <!-- Delete Button -->
+                <form method="POST" style="display:inline;">
+                    <input type="hidden" name="delete_product_id" value="{{ product.Product_ID }}">
+                    <button type="submit" name="delete_product" class="btn delete-btn" 
+                            onclick="return confirm('Are you sure you want to delete this product?');">
+                        Delete
+                    </button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+        
+        {% if request.args.get('edit_id') %}
+        <div>
+            <h2>Edit Product</h2>
+            <form method="POST">
+                <label for="edit_product_id">Product ID</label>
+                <input type="text" id="edit_product_id" name="edit_product_id" class="input-field" 
+                        value="{{ request.args.get('edit_id') }}" readonly>
+
+                <label for="edit_product_name">Product Name</label>
+                <input type="text" id="edit_product_name" name="edit_product_name" class="input-field"
+                        value="{{ request.args.get('edit_name') }}" required>
+
+                <button type="submit" name="edit_product" class="btn edit-btn">Edit Product</button>
+                <a href="{{ url_for('products') }}" class="btn cancel-btn">Cancel</a>
+            </form>
+        </div>
+        {% endif %}
+    </div>
+
+    </div>
+
+</body>
+</html>
