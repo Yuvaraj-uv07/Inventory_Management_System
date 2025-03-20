@@ -34,3 +34,4 @@ This **Flask-based Inventory Management System** is designed to help businesses 
 - Improve UI with **Bootstrap** or a modern frontend framework for better user experience.
 - Implement an **API** for seamless integration with other business applications.
 
+## End ##
